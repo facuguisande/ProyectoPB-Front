@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from 'antd';
 
 interface Employee {
-  _id: string;
+  _id: string; 
   name: string;
   lastName: string;
   photo: string;
