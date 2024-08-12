@@ -5,6 +5,7 @@ import AgendaPage from './components/AgendaPage/AgendaPage';
 import AddEventPage from './components/AddEventPage/AddEventPage';
 import PersonalPage from './components/PersonalPage/PersonalPage';
 import { MainPage } from './components/MainPage';
+import { LisEventPage } from './components/ListEventPage';
 
 const Main: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const Main: React.FC = () => {
         <Route path="/add-event" element={<AddEventPage />} />
         <Route path="/personnel" element={<PersonalPage />} />
         <Route path="/mainPage" element={<MainPage />} />
+        <Route path="/lista-event" element={<LisEventPage />}  />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>
