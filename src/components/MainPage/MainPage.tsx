@@ -14,6 +14,7 @@ const MainPage: React.FC<MainPageProps> = () => {
           <Link to="/agenda">Ver Agenda</Link>
           <Link to="/add-event">Agregar Evento</Link>
           <Link to="/personnel">Personal</Link>
+          <Link to="/lista-event">Lista de Eventos</Link>
         </div>
       </div>
     </div>
