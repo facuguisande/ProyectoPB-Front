@@ -1,0 +1,14 @@
+.ListEvent-page {
+display: 'flex';
+/* justify-content: 'center'; */
+/* padding: '2rem'; */
+align-items: center;
+background-position: center;
+background-image: url("../../../public/fondo1.jpg");
+background-size: contain;
+width: 100%;
+height: 100%;
+/* position: relative;
+overflow: hidden; */
+
+}

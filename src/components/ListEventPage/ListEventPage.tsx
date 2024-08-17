@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Row, Col, Input, Card, DatePicker, Empty } from 'antd';
+import { Row, Col, Input, Card, DatePicker, Empty, Select, Form, InputNumber } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
-import CardEvent from './CardEvent';
+import CardEvent, { CardEventProps } from './CardEvent';
+import { Modal } from 'antd';
+import './EventPage.css' 
 
 interface Event {
   id: string;
@@ -17,6 +19,8 @@ interface Event {
 const EventsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchDate, setSearchDate] = useState<Dayjs | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<CardEventProps | null>(null);
   const [events, setEvents] = useState<Event[]>([
     {
       id: '1',
@@ -55,6 +59,15 @@ const EventsPage: React.FC = () => {
       budget: 1200,
     },
     {
+      id: '4',
+      name: 'Emily',
+      lastName: 'Williams',
+      ci: '45678901',
+      date: dayjs('2024-11-28'),
+      people: 69,
+      budget: 56000,
+    },
+    {
       id: '5',
       name: 'David',
       lastName: 'Brown',
@@ -62,6 +75,24 @@ const EventsPage: React.FC = () => {
       date: dayjs('2024-09-10'),
       people: 16,
       budget: 1600,
+    },
+    {
+      id: '5',
+      name: 'David',
+      lastName: 'Brown',
+      ci: '67890123',
+      date: dayjs('2024-15-10'),
+      people: 36,
+      budget: 2000,
+    },
+    {
+      id: '5',
+      name: 'David',
+      lastName: 'Brown',
+      ci: '67890123',
+      date: dayjs('2024-26-11'),
+      people: 100,
+      budget: 36000,
     },
     {
       id: '6',
@@ -75,70 +106,118 @@ const EventsPage: React.FC = () => {
     // Add more sample events here
   ]);
 
-  const filteredEvents = events.filter((event) => {
-    const fullName = `${event.name} ${event.lastName}`.toLowerCase();
-    const searchTermLower = searchTerm.toLowerCase();
-    const nameMatch = fullName.includes(searchTermLower);
-    const ciMatch = event.ci.includes(searchTerm);
-    const dateMatch = searchDate ? event.date.isSame(searchDate, 'day') : true;
-    return nameMatch || ciMatch || dateMatch;
-  });
+  const {Option} = Select
+  
+  const [sortOrder, setSortOrder] = useState('asc');
 
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
-      <div style={{ maxWidth: '80%', width: '100%' }}>
-        <Row gutter={[16, 16]}>
-          <Col span={12}>
-            <Input
-              placeholder="Search by name or CI"
-              prefix={<SearchOutlined />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </Col>
-          <Col span={12}>
-            <DatePicker
-              placeholder="Filter by date"
-              style={{ width: '100%' }}
-              value={searchDate}
-              onChange={(date) => setSearchDate(date)}
-            />
-          </Col>
-        </Row>
-        <Row gutter={[16, 16]} style={{ marginTop: '2rem' }}>
-          {filteredEvents.length > 0 ? (
-            filteredEvents.map((event) => (
-              <CardEvent
-                id= {event.id}
-                ci= {event.ci}
-                name= {event.name}
-                lastName= {event.lastName}
-                date= {event.date}
-                people= {event.people}
-                budget= {event.budget}
+  const showModal = (event:any) => {
+    setSelectedEvent(event);
+    setIsModalVisible(true);
+  };
+  
+  const handleOk = () => {
+    // Aquí puedes actualizar el evento seleccionado
+    setIsModalVisible(false);
+  };
+  
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+  
+    const sortedEvents = events.sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a.date.diff(b.date);
+      } else {
+        return b.date.diff(a.date);
+      }
+    });
+  
+  
+    const filteredEvents = sortedEvents.filter((event) => {
+      const fullName = `${event.name} ${event.lastName}`.toLowerCase();
+      const searchTermLower = searchTerm.toLowerCase();
+      return fullName.includes(searchTermLower);
+    });
+  
+    return (
+      <div className="ListEvent-page">
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%',
+            position: 'relative',
+            overflow: 'auto',
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '80%',
+              width: '100%',
+              zIndex: 1,
+              position: 'relative',
+            }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col span={12}>
+                <Input
+                  placeholder="Buscar evento"
+                  prefix={<SearchOutlined />}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
-              // <Col key={event.id} xs={24} sm={12} md={8} lg={6}>
-              //   <Card
-              //     title={`${event.name} ${event.lastName}`}
-              //     style={{ textAlign: 'center' }}
-              //   >
-              //     <p>CI: {event.ci}</p>
-              //     <p>Date: {event.date.format('YYYY-MM-DD')}</p>
-              //     <p>People: {event.people}</p>
-              //     <p>Budget: {event.budget}</p>
-              //   </Card>
-              // </Col>
-            
-            ))) : (
-            <Col span={24}>
-              <Empty description="No events found" />
-            </Col>
-          )}
-        </Row>
+              </Col>
+              <Col span={12}>
+                <Select
+                  value={sortOrder}
+                  onChange={(value) => setSortOrder(value)}
+                  style={{ width: '100%' }}
+                >
+                  <Option value="asc">Fecha ascendente</Option>
+                  <Option value="desc">Fecha descendente</Option>
+                </Select>
+              </Col>
+            </Row>
+    
+            <Row gutter={[16, 16]} style={{ marginTop: '2rem' }}>
+              {filteredEvents.length > 0 ? (
+                filteredEvents.map((event) => (
+                  <CardEvent
+                    id={event.id}
+                    ci={event.ci}
+                    name={event.name}
+                    lastName={event.lastName}
+                    date={event.date}
+                    people={event.people}
+                    budget={event.budget}
+                  />
+                ))
+              ) : (
+                <Col span={24}>
+                  <Empty description="No events found" />
+                </Col>
+              )}
+            </Row>
+          </div>
+        </div>
+        <div
+          className="background-image"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundImage: 'url("../../../public/fondo1.jpg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            zIndex: 0,
+          }}
+        />
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default EventsPage;
 

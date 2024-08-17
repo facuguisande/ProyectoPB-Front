@@ -1,9 +1,9 @@
-import React from "react"
+import React, { useState } from "react"
 import { Row, Col, Input, Card, DatePicker, Empty } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 
-interface CardEventProps{
+export interface CardEventProps{
     id: string;
     ci: string,
     name: string,
@@ -14,13 +14,26 @@ interface CardEventProps{
 
 } 
 
+
+
 const CardEvent: React.FC<CardEventProps> = (event) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<CardEventProps | null>(null);
+
+
+  const showModal = (event: CardEventProps) => {
+    setSelectedEvent(event);
+    setIsModalVisible(true);
+  };
+  
+ 
 
 return (
 <Col key={event.id} xs={24} sm={12} md={8} lg={6}>
                 <Card
                   title={`${event.name} ${event.lastName}`}
-                  style={{ textAlign: 'center' }}
+                  style={{ textAlign: 'center', backgroundColor: '#2874a6', fontFamily: 'sans-serif' }}
+                  // onClick={() => showModal(event)}
                 >
                   <p>CI: {event.ci}</p>
                   <p>Date: {event.date.format('YYYY-MM-DD')}</p>
